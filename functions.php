@@ -30,15 +30,27 @@ function blennder_setup() {
 	 * Load additional block styles.
 	 * See details on how to add more styles in the readme.txt.
 	 */
-	$styled_blocks = [ 'button', 'file', 'latest-comments', 'latest-posts', 'post-title', 'quote', 'search' ];
-	foreach ( $styled_blocks as $block_name ) {
+	$styled_blocks = [
+		'blennder-blocks/accordion' => [ 'deps' => [ 'blennder' ] ],
+		'core/button' => [],
+		'core/file' => [],
+		'core/latest-comments' => [],
+		'core/latest-posts' => [],
+		'core/post-title' => [],
+		'core/quote' => [],
+		'core/search' => [],
+	 ];
+	foreach ( $styled_blocks as $block_name => $theArgs ) {
+		$block = explode( '/', $block_name );
+		$block = $block[1];
 		$args = array(
 			'handle' => "blennder-$block_name",
-			'src'    => get_theme_file_uri( "assets/css/blocks/$block_name.min.css" ),
+			'src'    => get_theme_file_uri( "assets/css/blocks/$block.min.css" ),
 			$args['path'] = get_theme_file_path( "assets/css/blocks/$block_name.min.css" ),
 		);
+		$args = array_merge( $args, $theArgs );
 		// Replace the "core" prefix if you are styling blocks from plugins.
-		wp_enqueue_block_style( "core/$block_name", $args );
+		wp_enqueue_block_style( $block_name, $args );
 	}
 
 }
@@ -53,15 +65,15 @@ add_action( 'after_setup_theme', 'blennder_setup' );
  */
 function blennder_styles() {
 	wp_enqueue_style(
-		'blennder-style',
+		'blennder',
 		get_stylesheet_uri(),
-		[],
+		[ 'bootstrap' ],
 		BLENNDER_VERSION
 	);
 	wp_enqueue_style(
-		'blennder-shared-styles',
+		'blennder-shared',
 		get_theme_file_uri( 'assets/css/style-shared.min.css' ),
-		[],
+		[ 'blennder' ],
 		BLENNDER_VERSION
 	);
 }
